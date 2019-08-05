@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
+	</head>
+	<body>
+
+		<h1>hello</h1>
+
+		<h2>counter: </h2> <span id='count'>not working</span>
+
+		<hr>
+		<span id='0'></span><br>
+		<span id='1'></span><br>
+		<span id='2'></span><br>
+		<span id='3'></span><br>
+		<span id='4'></span><br>
+		<span id='5'></span><br>
+		<span id='6'></span><br>
+		<span id='7'></span><br>
+		<span id='8'></span><br>
+		<span id='9'></span><br>
+		<hr>
+
+		<script>
+			let web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+			console.log(web3.eth.blockNumber);
+			abi = JSON.parse('[{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"chat","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"m","type":"string"}],"name":"sendMessage","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"source","type":"string"}],"name":"stringToBytes32","outputs":[{"name":"result","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getChatMessages","outputs":[{"name":"_cht","type":"bytes32[10]"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]');
+			chatroom = web3.eth.contract(abi);
+			console.log(web3.eth.accounts);
+			console.log(web3.eth);
+			
+
+			contractInstance = chatroom.at("0x0069798a21c38d7b9e86fd63d917949cbf1abbbf");
+			function submitMessage(m) {
+				contractInstance.sendMessage(m, {from: web3.eth.accounts[0]});
+				document.getElementById('mbox').value = "";
+			}
+
+			function fillMessages() {
+				let chatMessages = contractInstance.getChatMessages({from: web3.eth.accounts[0]});
+				document.getElementById("0").innerHTML = web3.toAscii(chatMessages[0]);
+				document.getElementById("1").innerHTML = web3.toAscii(chatMessages[1]);
+				document.getElementById("2").innerHTML = web3.toAscii(chatMessages[2]);
+				document.getElementById("3").innerHTML = web3.toAscii(chatMessages[3]);
+				document.getElementById("4").innerHTML = web3.toAscii(chatMessages[4]);
+				document.getElementById("5").innerHTML = web3.toAscii(chatMessages[5]);
+				document.getElementById("6").innerHTML = web3.toAscii(chatMessages[6]);
+				document.getElementById("7").innerHTML = web3.toAscii(chatMessages[7]);
+				document.getElementById("8").innerHTML = web3.toAscii(chatMessages[8]);
+				document.getElementById("9").innerHTML = web3.toAscii(chatMessages[9]);
+			}
+			
+			let chatMessages = contractInstance.getChatMessages({from: web3.eth.accounts[0]});
+			console.log( chatMessages );
+			document.getElementById('count').innerHTML = contractInstance.getChatMessages({from: web3.eth.accounts[0]});
+			setInterval(fillMessages, 100);
+			console.log(web3.toAscii(chatMessages[0]))
+		</script>
+
+		<input type="text" id="mbox" name="firstname" value="">
+		<br>
+		<button onclick="submitMessage(document.getElementById('mbox').value);"> SEND </button>
+
+
+	</body>
+</html>
